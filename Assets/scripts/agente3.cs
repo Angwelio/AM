@@ -4,90 +4,60 @@ using UnityEngine.InputSystem;
 
 public class agente3 : MonoBehaviour
 {
+    [Header("References")]
     public NavMeshAgent agent;
 
-    [Header("Terrain Speeds")]
-    public float grassspeed = 5f;
-    public float sandspeed = 4f;
-    public float mudspeed = 2f;
+    [Header("Speeds")]
+    public float grassSpeed = 3.5f;
+    public float sandSpeed = 2.5f;
+    public float mudSpeed = 1.8f;
 
-    [Header("Mouse")]
-    public LayerMask groundLayer;
-    public float navMeshSampleDistance = 2f;
+    int grassArea;
+    int sandArea;
+    int mudArea;
 
-    Camera cam;
-
-    int grassarea;
-    int sandarea;
-    int mudarea;
+    void Start()
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas))
+        {
+            GetComponent<NavMeshAgent>().Warp(hit.position);
+        }
+    }
 
     void Awake()
     {
-        cam = Camera.main;
-        grassarea = NavMesh.GetAreaFromName("grass");
-        sandarea = NavMesh.GetAreaFromName("sand");
-        mudarea = NavMesh.GetAreaFromName("mud");
-
-        Debug.Log($"Areas grass:{grassarea} sand:{sandarea} mud:{mudarea}");
+        grassArea = NavMesh.GetAreaFromName("grass");
+        sandArea = NavMesh.GetAreaFromName("sand");
+        mudArea = NavMesh.GetAreaFromName("mud");
     }
 
     void Update()
     {
-        MoveAgentToMouse();
-        UpdateSpeedBasedOnTerrain();
         Debug.Log(agent.speed);
-        /*if (NavMesh.SamplePosition(transform.position, out var hit, 10f, NavMesh.AllAreas))
-        {
-            agent.speed = 1f + hit.mask * 0.01f;
-            Debug.Log("HIT " + hit.mask);
-        }*/
-
+        UpdateSpeedByArea();
     }
 
-    void MoveAgentToMouse()
+    void UpdateSpeedByArea()
     {
-        Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
+        NavMeshHit hit;
 
-        Ray ray = cam.ScreenPointToRay(mouseScreenPos);
+        if (!NavMesh.SamplePosition(transform.position, out hit, 3f, NavMesh.AllAreas))
+            return;
+        Debug.Log("Area mask: " + hit.mask);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
-        {
-            if (NavMesh.SamplePosition(hit.point, out NavMeshHit navHit, navMeshSampleDistance, NavMesh.AllAreas))
-            {
-                agent.SetDestination(navHit.position);
-            }
-        }
+        int areaMask = hit.mask;
+
+        if (IsOnArea(areaMask, mudArea))
+            agent.speed = mudSpeed;
+        else if (IsOnArea(areaMask, sandArea))
+            agent.speed = sandSpeed;
+        else
+            agent.speed = grassSpeed;
     }
 
-    void UpdateSpeedBasedOnTerrain()
+    bool IsOnArea(int mask, int areaIndex)
     {
-        if (NavMesh.SamplePosition(transform.position, out var hit, agent.height, NavMesh.AllAreas))
-        {
-            int areaIndex = GetAreaIndexFromMask(hit.mask);
-
-            float targetSpeed = agent.speed;
-
-            if (areaIndex == grassarea)
-                targetSpeed = grassspeed;
-            else if (areaIndex == sandarea)
-                targetSpeed = sandspeed;
-            else if (areaIndex == mudarea)
-                targetSpeed = mudspeed;
-
-            agent.speed = targetSpeed;
-
-            Debug.Log($"AreaIndex: {areaIndex} | Speed: {agent.speed}");
-        }
+        return (mask & (1 << areaIndex)) != 0;
     }
-
-    int GetAreaIndexFromMask(int mask)
-    {
-        for (int i = 0; i < 32; i++)
-        {
-            if ((mask & (1 << i)) != 0)
-                return i;
-        }
-        return -1;
-    }
-
 }
