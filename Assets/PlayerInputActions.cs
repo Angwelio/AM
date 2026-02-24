@@ -100,6 +100,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""cambio color"",
+                    ""type"": ""Button"",
+                    ""id"": ""064f2c4e-769a-4843-800a-6b214c187f87"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -113,6 +122,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""click"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5a5a72d2-0d24-420a-8db5-d385da19640a"",
+                    ""path"": ""<Keyboard>/#(C)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""cambio color"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,6 +142,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_click = m_Player.FindAction("click", throwIfNotFound: true);
+        m_Player_cambiocolor = m_Player.FindAction("cambio color", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -203,6 +224,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_click;
+    private readonly InputAction m_Player_cambiocolor;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -218,6 +240,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/click".
         /// </summary>
         public InputAction @click => m_Wrapper.m_Player_click;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/cambiocolor".
+        /// </summary>
+        public InputAction @cambiocolor => m_Wrapper.m_Player_cambiocolor;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -247,6 +273,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @click.started += instance.OnClick;
             @click.performed += instance.OnClick;
             @click.canceled += instance.OnClick;
+            @cambiocolor.started += instance.OnCambiocolor;
+            @cambiocolor.performed += instance.OnCambiocolor;
+            @cambiocolor.canceled += instance.OnCambiocolor;
         }
 
         /// <summary>
@@ -261,6 +290,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @click.started -= instance.OnClick;
             @click.performed -= instance.OnClick;
             @click.canceled -= instance.OnClick;
+            @cambiocolor.started -= instance.OnCambiocolor;
+            @cambiocolor.performed -= instance.OnCambiocolor;
+            @cambiocolor.canceled -= instance.OnCambiocolor;
         }
 
         /// <summary>
@@ -308,5 +340,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "cambio color" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCambiocolor(InputAction.CallbackContext context);
     }
 }

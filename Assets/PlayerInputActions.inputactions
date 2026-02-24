@@ -14,6 +14,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "cambio color",
+                    "type": "Button",
+                    "id": "064f2c4e-769a-4843-800a-6b214c187f87",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -25,6 +34,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5a5a72d2-0d24-420a-8db5-d385da19640a",
+                    "path": "<Keyboard>/#(C)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "cambio color",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
