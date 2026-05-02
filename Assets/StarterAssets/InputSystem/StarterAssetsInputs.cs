@@ -20,9 +20,13 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		[Header("yo cambios")]
+		public bool stretch;
+
 #if ENABLE_INPUT_SYSTEM
 		public void OnMove(InputValue value)
 		{
+			Debug.Log("Move input: " + value.Get<Vector2>());
 			MoveInput(value.Get<Vector2>());
 		}
 
@@ -42,6 +46,11 @@ namespace StarterAssets
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
+		}
+
+		public void OnStretch(InputValue value)
+		{
+			stretch = value.isPressed;
 		}
 #endif
 

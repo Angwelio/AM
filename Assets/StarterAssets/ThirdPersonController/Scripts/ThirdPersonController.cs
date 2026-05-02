@@ -97,6 +97,12 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDStretch;
+
+        Rigidbody[] _ragdollBodies;
+        Collider[] _ragdollColliders;
+
+        public int health = 10;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -134,6 +140,19 @@ namespace StarterAssets
 
         private void Start()
         {
+            _ragdollBodies = GetComponentsInChildren<Rigidbody>();
+            _ragdollColliders = GetComponentsInChildren<Collider>();
+
+            foreach (var rb in _ragdollBodies)
+            {
+                rb.isKinematic = true;
+            }
+
+            foreach (var col in _ragdollColliders)
+            {
+                if (col.gameObject != gameObject) // ignore main collider
+                col.enabled = false;
+            }
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
             _hasAnimator = TryGetComponent(out _animator);
@@ -159,6 +178,11 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+            HandleStretch();
+            if (health <= 0)
+            {
+                EnableRagdoll();
+            }
         }
 
         private void LateUpdate()
@@ -173,6 +197,7 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDStretch = Animator.StringToHash("Stretch");
         }
 
         private void GroundedCheck()
@@ -386,6 +411,37 @@ namespace StarterAssets
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+            }
+        }
+
+        private void HandleStretch()
+        {
+            if (_input.stretch)
+            {
+                if (_hasAnimator)
+                {
+                    _animator.SetTrigger(_animIDStretch);
+                }
+                _input.stretch = false;
+            }
+        }
+        public void EnableRagdoll()
+        {
+            // disable animator
+            _animator.enabled = false;
+
+            // disable controller
+            _controller.enabled = false;
+
+            // enable physics
+            foreach (var rb in _ragdollBodies)
+            {
+                rb.isKinematic = false;
+            }
+
+            foreach (var col in _ragdollColliders)
+            {
+                col.enabled = true;
             }
         }
     }
